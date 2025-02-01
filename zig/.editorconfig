@@ -1,0 +1,5 @@
+root = true
+
+[*zig]
+indent_style = space
+indent_size = 4

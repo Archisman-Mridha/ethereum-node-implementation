@@ -1,0 +1,11 @@
+[package]
+name = "ethereum-node"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+alloy-primitives = { version = "0.8.19", features = ["k256", "rlp", "sha3-keccak"] }
+alloy-rlp = { version = "0.3.11", features = ["derive"] }
+clap = { version = "4.5.27", features = ["derive"] }
+ethereum-types = { version = "0.15.1", features = ["serialize"] }
+hex = "0.4.3"

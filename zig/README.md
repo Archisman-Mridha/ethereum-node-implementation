@@ -1,10 +1,14 @@
 ## TODOs
 
-- [ ] RLP encoding and decoding.
+- [ ] RLP implementation.
+
+- [ ] Battle test the RLP implementation.
 
 - [x] Build and link libmdbx.
 
-- [ ] Modified Merkle Patricia Tries.
+- [ ] Modified Merkle Patricia Tries implementation.
+
+- [ ] Support IPv6 addresses.
 
 ## REFERENCEs
 
@@ -20,6 +24,8 @@
 
 - [Ethereum Under the Hood: Algorithms And Data Structures - 0xPoland S01E02](https://www.youtube.com/watch?v=OxofT39TJgg&t=127s)
 
-- [Abstract (Modern) Algebra Course Lectures](https://www.youtube.com/playlist?list=PLmU0FIlJY-Mn3Pt-r5zQ_-Ar8mAnBZTf2)
-
 - [verkle-crypto : Cryptography for Ethereum Verkle Trees](https://github.com/jsign/verkle-crypto)
+
+- [UDP server in C](https://github.com/nikhilroxtomar/UDP-Client-Server-Program-in-C/blob/master/udpServer.c)
+
+- [zig-networking](https://github.com/ikskuh/zig-network)

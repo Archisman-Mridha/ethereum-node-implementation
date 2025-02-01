@@ -16,7 +16,7 @@ pub fn build(b: *std.Build) void {
 
     const exe = b.addExecutable(.{
         .name = "ethereum-exection-client",
-        .root_source_file = b.path("src/clients/execution/main.zig"),
+        .root_source_file = b.path("src/main.zig"),
         .target = target,
         .optimize = optimize,
     });
@@ -51,4 +51,15 @@ pub fn build(b: *std.Build) void {
     // This will evaluate the `run` step rather than the default, which is `install`.
     const runBuildStep = b.step("run", "Run the app");
     runBuildStep.dependOn(&runBuildGraphStep.step);
+
+    const unitTests = b.addTest(.{
+        .root_source_file = b.path("src/main.zig"),
+        .target = target,
+        .optimize = optimize,
+    });
+
+    const testBuildGraphStep = b.addRunArtifact(unitTests);
+
+    const testBuildStep = b.step("test", "Run unit tests");
+    testBuildStep.dependOn(&testBuildGraphStep.step);
 }

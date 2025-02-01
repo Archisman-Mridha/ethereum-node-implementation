@@ -23,6 +23,8 @@ pub const RLPEncodingError = error{
 //		(1) a positive integer
 // 		(2) a string (i.e. byte array)
 //		(3) a list of items
+//
+/// Tries to encode the given data into the given buffer.
 pub fn encode(comptime T: type, data: T, encoding: *std.ArrayList(u8)) !void {
     const allocator = encoding.allocator;
 
@@ -112,43 +114,41 @@ pub fn encode(comptime T: type, data: T, encoding: *std.ArrayList(u8)) !void {
             try encode(optionalInfo.child, data.?, encoding);
         },
 
-        .Pointer => |pointerInfo| {
-            switch (pointerInfo.size) {
-                .One => try encode(pointerInfo.child, data.*, encoding),
+        .Pointer => |pointerInfo| switch (pointerInfo.size) {
+            .One => try encode(pointerInfo.child, data.*, encoding),
 
-                .Slice => {
-                    // Considered as a string.
-                    if (@sizeOf(pointerInfo.child) == 1) {
-                        switch (data.len) {
-                            // Considered as an empty string.
-                            0 => try encoding.append(0x80),
+            .Slice => {
+                // Considered as a string.
+                if (@sizeOf(pointerInfo.child) == 1) {
+                    switch (data.len) {
+                        // Considered as an empty string.
+                        0 => try encoding.append(0x80),
 
-                            // Consider as an integer.
-                            1 => try encode(pointerInfo.child, data[0], encoding),
+                        // Consider as an integer.
+                        1 => try encode(pointerInfo.child, data[0], encoding),
 
-                            // Considered as a short string.
-                            2...55 => try encodeString(data, encoding),
+                        // Considered as a short string.
+                        2...55 => try encodeString(data, encoding),
 
-                            // Considered as a long string.
-                            else => try encodeString(data, encoding),
-                        }
+                        // Considered as a long string.
+                        else => try encodeString(data, encoding),
+                    }
+                }
+
+                // Considered as a list.
+                else {
+                    var payload = std.ArrayList(u8).init(allocator);
+                    defer payload.deinit();
+
+                    for (data) |item| {
+                        try encode(pointerInfo.child, item, &payload);
                     }
 
-                    // Considered as a list.
-                    else {
-                        var payload = std.ArrayList(u8).init(allocator);
-                        defer payload.deinit();
+                    try encodeListPayload(payload, encoding);
+                }
+            },
 
-                        for (data) |item| {
-                            try encode(pointerInfo.child, item, &payload);
-                        }
-
-                        try encodeListPayload(payload, encoding);
-                    }
-                },
-
-                else => return RLPEncodingError.UnsupportedType,
-            }
+            else => return RLPEncodingError.UnsupportedType,
         },
 
         else => RLPEncodingError.UnsupportedType,
